@@ -76,7 +76,7 @@ $app->routeMiddleware([
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
@@ -87,6 +87,8 @@ $app->register(Laravel\Tinker\TinkerServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(Spatie\MediaLibrary\MediaLibraryServiceProvider::class);
 
 // Register lumen commands provider for dev env.
 if (env('APP_ENV') === 'local') {
@@ -101,6 +103,8 @@ if (env('APP_ENV') === 'local') {
 */
 $app->configure('auth');
 $app->configure('passport');
+$app->configure('medialibrary');
+$app->configure('filesystems');
 
 /*
 |--------------------------------------------------------------------------
