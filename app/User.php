@@ -4,15 +4,19 @@ namespace App;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
+use League\OAuth2\Server\Exception\OAuthServerException;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use HasApiTokens, Authenticatable, Authorizable;
+    use HasApiTokens,
+        Authenticatable,
+        Authorizable;
 
     /**
      * The attributes that are mass assignable.
@@ -89,5 +93,29 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function profile()
     {
         return route('profile.show', ['user' => $this]);
+    }
+
+    /**
+     * Validate if user entered matching password, is activated and not blocked.
+     *
+     * @see \Laravel\Passport\Bridge\UserRepository @ method getUserEntityByUserCredentials
+     *
+     * @param $password
+     * @return bool
+     * @throws OAuthServerException
+     */
+    public function validateForPassportPasswordGrant($password)
+    {
+        //check for password
+        if (Hash::check($password, $this->getAuthPassword())) {
+            //is user active?
+            if ($this->activated && !$this->blocked) {
+                return true;
+            }
+
+            throw new OAuthServerException(
+                'User account is not active', 6,
+                'account_inactive', 401);
+        }
     }
 }
