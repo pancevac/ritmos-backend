@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -66,6 +67,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getProfileAttribute()
     {
         return $this->profile();
+    }
+
+    /**
+     * Scope a query to only include active users.
+     *
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function scopeActivated(Builder $builder)
+    {
+        return $builder->where('activated', true)
+            ->where('blocked', false);
     }
 
     /**

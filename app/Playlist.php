@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Playlist extends Model
 {
@@ -42,6 +43,18 @@ class Playlist extends Model
     protected $appends = ['path'];
 
     /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new ActivatedOwnerScope('owner'));
+    }
+
+    /**
      * Get user that owns the playlist.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -52,14 +65,16 @@ class Playlist extends Model
     }
 
     /**
-     * Scope a query to only include public playlist.
+     * Scope a query to only include public or owner playlist.
      *
      * @param Builder $builder
      * @return Builder
      */
     public function scopePublic(Builder $builder)
     {
-        return $builder->where('private', '!=', true);
+        $builder->where('private', '!=', true);
+
+        return Auth::check() ? $builder->orWhere('user_id', Auth::id()) : $builder;
     }
 
     /**

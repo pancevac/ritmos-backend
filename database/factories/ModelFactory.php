@@ -25,6 +25,9 @@ $factory->define(App\Playlist::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'private' => $faker->boolean,
-        'user_id' => factory(\App\User::class)->create()->id,
+        'user_id' => factory(\App\User::class)->create([
+            'activated' => true,
+            'blocked' => false
+        ])->id,
     ];
 });

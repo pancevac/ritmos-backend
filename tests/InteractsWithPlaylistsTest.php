@@ -27,6 +27,28 @@ class InteractsWithPlaylistsTest extends TestCase
     }
 
     /** @test */
+    function it_can_return_public_and_private_playlists_for_authenticated_user()
+    {
+        $user = factory(\App\User::class)->create(['activated' => true, 'blocked' => false]);
+
+        $this->actingAs($user);
+
+        $public = factory(\App\Playlist::class, 3)->create(['private' => false])->load('owner');
+        $otherPrivate = factory(\App\Playlist::class, 2)->create(['private' => true])->load('owner');
+
+        $owned = factory(\App\Playlist::class, 2)->create([
+            'private' => true,
+            'user_id' => $user->id
+        ])->load('owner');
+
+        $playlists = $public->merge($owned);
+
+        $this->get('api/playlists')->seeJson([
+            'playlists' => $playlists->sortByDesc('created_at')->toArray()
+        ]);
+    }
+
+    /** @test */
     function it_will_return_specific_only_public_playlist()
     {
         $public =  factory(\App\Playlist::class)->create(['private' => false]);
@@ -36,6 +58,22 @@ class InteractsWithPlaylistsTest extends TestCase
             ->seeJson($public->toArray());
 
         $this->get('api/playlists/' . $anonymous->getKey())
-            ->seeJson(['error' => 'No data found.']);
+            ->seeJson(['error' => 'No data found.'])
+            ->assertResponseStatus(404);
+    }
+
+    /** @test */
+    function it_will_also_return_private_playlist_if_belongs_to_owner()
+    {
+        $user = factory(\App\User::class)->create(['activated' => true, 'blocked' => false]);
+        $this->actingAs($user);
+
+        $playlist = factory(\App\Playlist::class)->create([
+            'user_id' => $user->getKey(),
+            'private' => true
+        ])->load('owner');
+
+        $this->get('api/playlists/' . $playlist->getKey())
+            ->seeJson($playlist->toArray());
     }
 }
