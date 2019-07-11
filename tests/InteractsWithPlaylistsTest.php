@@ -1,6 +1,8 @@
 <?php
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class InteractsWithPlaylistsTest extends TestCase
 {
@@ -29,16 +31,14 @@ class InteractsWithPlaylistsTest extends TestCase
     /** @test */
     function it_can_return_public_and_private_playlists_for_authenticated_user()
     {
-        $user = factory(\App\User::class)->create(['activated' => true, 'blocked' => false]);
-
-        $this->actingAs($user);
+        $this->signIn();
 
         $public = factory(\App\Playlist::class, 3)->create(['private' => false])->load('owner');
         $otherPrivate = factory(\App\Playlist::class, 2)->create(['private' => true])->load('owner');
 
         $owned = factory(\App\Playlist::class, 2)->create([
             'private' => true,
-            'user_id' => $user->id
+            'user_id' => Auth::id()
         ])->load('owner');
 
         $playlists = $public->merge($owned);
@@ -65,15 +65,38 @@ class InteractsWithPlaylistsTest extends TestCase
     /** @test */
     function it_will_also_return_private_playlist_if_belongs_to_owner()
     {
-        $user = factory(\App\User::class)->create(['activated' => true, 'blocked' => false]);
-        $this->actingAs($user);
+        $this->signIn();
 
         $playlist = factory(\App\Playlist::class)->create([
-            'user_id' => $user->getKey(),
+            'user_id' => Auth::id(),
             'private' => true
         ])->load('owner');
 
         $this->get('api/playlists/' . $playlist->getKey())
             ->seeJson($playlist->toArray());
+    }
+
+    /** @test */
+    function a_user_can_create_new_playlist()
+    {
+        $this->signIn();
+
+        $playlist = factory(\App\Playlist::class)->make();
+
+        $post = Arr::except($playlist->toArray(), ['user_id', 'path']);
+
+        $this->post('api/playlists', $post);
+
+        $this->seeInDatabase('playlists', ['name' => $playlist->name]);
+    }
+
+    /** @test */
+    function a_non_auth_user_can_now_create_playlist()
+    {
+        $playlist = factory(\App\Playlist::class)->make();
+
+        $response = $this->post('api/playlists', Arr::except($playlist->toArray(), ['user_id', 'path']));
+
+        $response->assertResponseStatus(401);
     }
 }

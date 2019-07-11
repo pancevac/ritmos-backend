@@ -88,6 +88,16 @@ class Playlist extends Model
     }
 
     /**
+     * Set the user id for playlist.
+     *
+     * @param $value
+     */
+    public function setUserIdAttribute($value)
+    {
+        $this->attributes['user_id'] = $value ?? Auth::id();
+    }
+
+    /**
      * Generate playlist path.
      *
      * @return string

@@ -31,9 +31,14 @@ $router->get('playlists', [
     'as' => 'playlists.index',
     'uses' => 'PlaylistsController@index'
 ]);
+$router->post('playlists', [
+    'as' => 'playlists.store',
+    'uses' => 'PlaylistsController@store',
+    'middleware' => 'auth'
+]);
 $router->get('playlists/{playlist}', [
     'as' => 'playlists.show',
-    'uses' => 'PlaylistsController@show'
+    'uses' => 'PlaylistsController@show',
 ]);
 
 /**
