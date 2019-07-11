@@ -7,10 +7,11 @@ use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use Authenticatable, Authorizable;
+    use HasApiTokens, Authenticatable, Authorizable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,7 +19,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email',
+        'name', 'email', 'password'
     ];
 
     /**
@@ -45,7 +46,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $appends = ['path'];
+    protected $appends = ['profile'];
 
     /**
      * Get playlists that belongs to the user.
@@ -62,9 +63,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return string
      */
-    public function getPathAttribute()
+    public function getProfileAttribute()
     {
-        return $this->path();
+        return $this->profile();
     }
 
     /**
@@ -72,7 +73,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return string
      */
-    public function path()
+    public function profile()
     {
         return route('profile.show', ['user' => $this]);
     }

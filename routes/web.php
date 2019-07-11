@@ -1,5 +1,7 @@
 <?php
 
+use \Illuminate\Http\Request;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -15,25 +17,31 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => 'api'], function () use ($router) {
 
-    /**
-     * Playlist
-     */
-    $router->get('playlists', [
-        'as' => 'playlists.index',
-        'uses' => 'PlaylistsController@index'
-    ]);
-    $router->get('playlists/{playlist}', [
-        'as' => 'playlists.show',
-        'uses' => 'PlaylistsController@show'
-    ]);
 
-    /**
-     * User
-     */
-    $router->get('profile/{user}', [
-        'as' => 'profile.show',
-        'uses' => 'ProfileController@show'
-    ]);
-});
+$router->post('login', 'Auth\LoginController@login');
+$router->post('register', 'Auth\RegisterController@register');
+
+$router->get('user', ['middleware' => 'auth', function (Request $request) {
+    return $request->user();
+}]);
+
+/**
+ * Playlist
+ */
+$router->get('playlists', [
+    'as' => 'playlists.index',
+    'uses' => 'PlaylistsController@index'
+]);
+$router->get('playlists/{playlist}', [
+    'as' => 'playlists.show',
+    'uses' => 'PlaylistsController@show'
+]);
+
+/**
+ * User
+ */
+$router->get('profile/{user}', [
+    'as' => 'profile.show',
+    'uses' => 'ProfileController@show'
+]);
