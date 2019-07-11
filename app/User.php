@@ -27,6 +27,53 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'password',
+        'id', 'password', 'activated', 'blocked', 'created_at', 'updated_at',
     ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'activated' => 'boolean',
+        'blocked' => 'boolean'
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['path'];
+
+    /**
+     * Get playlists that belongs to the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|mixed
+     */
+    public function playlists()
+    {
+        return $this->hasMany(Playlist::class)->scopes(['public']);
+    }
+
+    /**
+     * Get the user path.
+     *
+     * @return string
+     */
+    public function getPathAttribute()
+    {
+        return $this->path();
+    }
+
+    /**
+     * Generate the user path.
+     *
+     * @return string
+     */
+    public function path()
+    {
+        return route('profile.show', ['user' => $this]);
+    }
 }

@@ -14,3 +14,26 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix' => 'api'], function () use ($router) {
+
+    /**
+     * Playlist
+     */
+    $router->get('playlists', [
+        'as' => 'playlists.index',
+        'uses' => 'PlaylistsController@index'
+    ]);
+    $router->get('playlists/{playlist}', [
+        'as' => 'playlists.show',
+        'uses' => 'PlaylistsController@show'
+    ]);
+
+    /**
+     * User
+     */
+    $router->get('profile/{user}', [
+        'as' => 'profile.show',
+        'uses' => 'ProfileController@show'
+    ]);
+});
