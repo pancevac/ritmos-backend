@@ -42,7 +42,8 @@ $router->get('playlists/{playlist}', [
 ]);
 $router->post('playlists/{playlist}/upload/image', [
     'as' => 'playlists.image',
-    'uses' => 'PlaylistsController@uploadImage'
+    'uses' => 'PlaylistsController@uploadImage',
+    'middeware' => 'auth'
 ]);
 
 /**
@@ -51,4 +52,19 @@ $router->post('playlists/{playlist}/upload/image', [
 $router->get('profile/{user}', [
     'as' => 'profile.show',
     'uses' => 'ProfileController@show'
+]);
+$router->put('profile/{user}/update', [
+    'as' => 'profile.update',
+    'uses' => 'ProfileController@update',
+    'middleware' => 'auth'
+]);
+$router->get('profile/{user}/deactivate', [
+    'as' => 'profile.deactivate',
+    'uses' => 'ProfileController@deactivate',
+    'middleware' => 'auth'
+]);
+$router->post('profile/{user}/upload/image', [
+    'as' => 'profile.image',
+    'uses' => 'ProfileController@uploadImage',
+    'middleware' => 'auth'
 ]);
