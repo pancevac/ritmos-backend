@@ -40,6 +40,10 @@ $router->get('playlists/{playlist}', [
     'as' => 'playlists.show',
     'uses' => 'PlaylistsController@show',
 ]);
+$router->post('playlists/{playlist}/upload/image', [
+    'as' => 'playlists.image',
+    'uses' => 'PlaylistsController@uploadImage'
+]);
 
 /**
  * User

@@ -13,12 +13,18 @@ class PlaylistsController extends Controller
     /**
      * Show list of playlists.
      *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         return response()->json([
-            'playlists' => Playlist::with('owner')->public()->latest()->take(5)->get()
+            'playlists' => Playlist::with('owner')
+                ->public()
+                ->includeByUser($request)
+                ->latest()
+                ->take(5)
+                ->get()
         ]);
     }
 
@@ -61,6 +67,36 @@ class PlaylistsController extends Controller
         }
 
         return $playlist;
+    }
+
+    /**
+     * Store image for playlist.
+     *
+     * @param Request $request
+     * @param $playlistId
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function uploadImage(Request $request, $playlistId)
+    {
+        $this->validate($request, [
+            'image' => 'required|image',
+        ]);
+
+        $playlist = Playlist::public()->where('id', $playlistId)->first();
+
+        if (!$playlist) {
+            return response()->json(['error' => 'No playlist found.'], 404);
+        }
+
+        // Save image after validation
+        $playlist->addMediaFromRequest('image')
+            ->usingName($playlist->name)
+            ->toMediaCollection('cover');
+
+        return response()->json([
+            'success' => 'Successful uploaded image.'
+        ]);
     }
 
     public function update($id, Request $request)

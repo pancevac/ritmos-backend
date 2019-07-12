@@ -4,10 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
-class Playlist extends Model
+class Playlist extends Model implements HasMedia
 {
+    use HasMediaTrait;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -78,6 +83,24 @@ class Playlist extends Model
     }
 
     /**
+     * Scope a query to only include specific user's playlists if there is url query in request.
+     *
+     * @param Builder $builder
+     * @param Request $request
+     * @return Builder
+     */
+    public function scopeIncludeByUser(Builder $builder, Request $request)
+    {
+        if ($request->has('user')) {
+            return $builder->whereHas('owner', function (Builder $builder) use ($request) {
+                $builder->where('email', $request->get('user'));
+            });
+        }
+
+        return $builder;
+    }
+
+    /**
      * Get the playlist path.
      *
      * @return string
@@ -105,5 +128,14 @@ class Playlist extends Model
     public function path()
     {
         return route('playlists.show', ['playlist' => $this]);
+    }
+
+    /**
+     * Register playlist image collections.
+     */
+    public function registerMediaCollections()
+    {
+        $this->addMediaCollection('cover')
+            ->singleFile();
     }
 }
