@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Scopes\ActivatedOwnerScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -70,6 +71,18 @@ class Playlist extends Model implements HasMedia
     }
 
     /**
+     * Get all tracks in playlist.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function tracks()
+    {
+        return $this->belongsToMany(Track::class)
+            ->withPivot('order')
+            ->orderByDesc('playlist_track.order');
+    }
+
+    /**
      * Scope a query to only include public or owner playlist.
      *
      * @param Builder $builder
@@ -80,6 +93,17 @@ class Playlist extends Model implements HasMedia
         $builder->where('private', '!=', true);
 
         return Auth::check() ? $builder->orWhere('user_id', Auth::id()) : $builder;
+    }
+
+    /**
+     * Scope a query to only return playlist owned by user.
+     *
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function scopeOwned(Builder $builder)
+    {
+        return $builder->where('user_id', Auth::id());
     }
 
     /**

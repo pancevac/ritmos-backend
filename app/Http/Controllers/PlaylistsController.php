@@ -82,7 +82,7 @@ class PlaylistsController extends Controller
             'image' => 'required|image',
         ]);
 
-        $playlist = Playlist::public()->where('id', $playlistId)->first();
+        $playlist = Playlist::owned()->where('id', $playlistId)->first();
 
         if (!$playlist) {
             return response()->json(['error' => 'No playlist found.'], 404);
