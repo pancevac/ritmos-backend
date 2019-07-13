@@ -78,7 +78,7 @@ class TracksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $track = Track::where('id', $id)->where('user_id', Auth::id())->first();
+        $track = Track::withoutGlobalScopes()->owned()->where('id', $id)->first();
 
         if (!$track) {
             return response()->json(['error' => 'Unknown track.']);
@@ -106,8 +106,22 @@ class TracksController extends Controller
             response()->json(['error' => 'Track can not be updated!']);
     }
 
+    /**
+     * Delete specific track resource.
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy($id)
     {
-        //
+        $track = Track::withoutGlobalScopes()->owned()->where('id', $id)->first();
+
+        if (!$track) {
+            return response()->json(['erorr' => 'Unknown track.']);
+        }
+
+        $track->delete();
+
+        return response()->json(['success' => 'Track successfully deleted.']);
     }
 }

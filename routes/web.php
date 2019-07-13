@@ -43,7 +43,17 @@ $router->get('playlists/{playlist}', [
 $router->post('playlists/{playlist}/upload/image', [
     'as' => 'playlists.image',
     'uses' => 'PlaylistsController@uploadImage',
-    'middeware' => 'auth'
+    'middleware' => 'auth'
+]);
+$router->put('playlists/{playlist}/update', [
+    'as' => 'playlists.update',
+    'uses' => 'PlaylistsController@update',
+    'middleware' => 'auth',
+]);
+$router->delete('playlists/{playlist}', [
+    'as' => 'playlists.delete',
+    'uses' => 'PlaylistsController@destroy',
+    'middleware' => 'auth',
 ]);
 
 /**
@@ -57,6 +67,11 @@ $router->post('tracks', [
 $router->put('tracks/{track}/update', [
     'as' => 'tracks.update',
     'uses' => 'TracksController@update',
+    'middleware' => 'auth'
+]);
+$router->delete('tracks/{track}', [
+    'as' => 'tracks.delete',
+    'uses' => 'TracksController@destroy',
     'middleware' => 'auth'
 ]);
 

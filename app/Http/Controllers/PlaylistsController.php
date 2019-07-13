@@ -98,13 +98,54 @@ class PlaylistsController extends Controller
         ]);
     }
 
-    public function update($id, Request $request)
+    /**
+     * Update the given playlist resource.
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function update(Request $request, $id)
     {
-        //
+        $playlist = Playlist::owned()->find($id);
+
+        if (!$playlist) {
+            return response()->json(['error' => 'Playlist not found.']);
+        }
+
+        $this->validate($request, [
+            'private' => 'nullable|boolean',
+            'name' => ['required', 'string', 'max:255',
+                Rule::unique('playlists')->where(function ($query) {
+                    return $query->where('user_id', Auth::id());
+                })->ignore($id)
+            ],
+        ]);
+
+        $result = $playlist->update($request->only(['name', 'private']));
+
+        return $result ?
+            response()->json($playlist->refresh()) :
+            response()->json(['error' => 'Error while updating playlist.']);
     }
 
+    /**
+     * Delete the specific playlist resource.
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy($id)
     {
-        //
+        $playlist = Playlist::owned()->find($id);
+
+        if (!$playlist) {
+            return response()->json(['error' => 'Unknown playlist.']);
+        }
+
+        $playlist->delete();
+
+        return response()->json(['success' => 'Playlist successfully deleted.']);
     }
 }

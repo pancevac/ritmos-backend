@@ -4,7 +4,9 @@ namespace App;
 
 use App\Scopes\AccessibleScope;
 use App\Traits\PlaylistAttachable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -80,6 +82,17 @@ class Track extends Model implements HasMedia
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Scope a query to only include owned track by logged user.
+     *
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function scopeOwned(Builder $builder)
+    {
+        return $builder->where('user_id', Auth::id());
     }
 
     /**
