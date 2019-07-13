@@ -16,7 +16,7 @@ trait PlaylistAttachable
         $order = 1;
 
         if ($playlist->tracks->isNotEmpty()) {
-            $highestOrderTrack = $playlist->tracks->first();
+            $highestOrderTrack = $playlist->tracks->last();
             $order = $highestOrderTrack->pivot->order + 1;
         }
 

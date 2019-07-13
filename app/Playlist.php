@@ -79,7 +79,7 @@ class Playlist extends Model implements HasMedia
     {
         return $this->belongsToMany(Track::class)
             ->withPivot('order')
-            ->orderByDesc('playlist_track.order');
+            ->orderBy('playlist_track.order');
     }
 
     /**

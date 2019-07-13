@@ -49,6 +49,7 @@ class Track extends Model implements HasMedia
         'user_id',
         'created_at',
         'updated_at',
+        //'pivot', TODO hide if needed
     ];
 
     /**
