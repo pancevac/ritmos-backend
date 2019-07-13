@@ -47,6 +47,20 @@ $router->post('playlists/{playlist}/upload/image', [
 ]);
 
 /**
+ * Track
+ */
+$router->post('tracks', [
+    'as' => 'tracks.store',
+    'uses' => 'TracksController@store',
+    'middleware' => 'auth'
+]);
+$router->put('tracks/{track}/update', [
+    'as' => 'tracks.update',
+    'uses' => 'TracksController@update',
+    'middleware' => 'auth'
+]);
+
+/**
  * User
  */
 $router->get('profile/{user}', [
