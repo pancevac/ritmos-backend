@@ -49,8 +49,16 @@ class Track extends Model implements HasMedia
         'user_id',
         'created_at',
         'updated_at',
+        'media',
         //'pivot', TODO hide if needed
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['media_path'];
 
     /**
      * The "booting" method of the model.
@@ -83,6 +91,20 @@ class Track extends Model implements HasMedia
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get media path for track.
+     *
+     * @return string
+     */
+    public function getMediaPathAttribute()
+    {
+        if ($this->relationLoaded('media')) {
+            return url($this->getFirstMediaUrl('track'));
+        }
+
+        return '';
     }
 
     /**
