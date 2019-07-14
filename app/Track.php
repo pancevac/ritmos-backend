@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Scopes\AccessibleScope;
 use App\Traits\PlaylistAttachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -61,18 +60,6 @@ class Track extends Model implements HasMedia
     protected $appends = ['media_path'];
 
     /**
-     * The "booting" method of the model.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope(new AccessibleScope('playlists'));
-    }
-
-    /**
      * Get playlists that track belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -100,7 +87,7 @@ class Track extends Model implements HasMedia
      */
     public function getMediaPathAttribute()
     {
-        if ($this->relationLoaded('media')) {
+        if ($this->hasMedia('track')) {
             return url($this->getFirstMediaUrl('track'));
         }
 
@@ -116,6 +103,19 @@ class Track extends Model implements HasMedia
     public function scopeOwned(Builder $builder)
     {
         return $builder->where('user_id', Auth::id());
+    }
+
+    /**
+     * Scope a query to only return tracks that belongs to public playlists.
+     *
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function scopeVisible(Builder $builder)
+    {
+        return $builder->whereHas('playlists', function (Builder $builder) {
+            $builder->public();
+        });
     }
 
     /**
