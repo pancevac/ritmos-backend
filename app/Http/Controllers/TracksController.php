@@ -124,6 +124,60 @@ class TracksController extends Controller
     }
 
     /**
+     * Handle adding track into playlist.
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function attachToPlaylist(Request $request, $id)
+    {
+        $track = Track::owned()->where('id', $id)->first();
+
+        if (!$track) {
+            return response()->json(['error' => 'Unknown track.']);
+        }
+
+        $this->validate($request, [
+            'playlist_id' => ['required', 'integer', new ValidateTrackPlaylist($track)],
+        ]);
+
+        $playlist = Playlist::with('tracks')->find($request->playlist_id);
+
+        $track->attachToPlaylist($playlist);
+
+        return response()->json(['success' => 'Track added to playlist.']);
+    }
+
+    /**
+     * Handle removing track from playlist.
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function detachFromPlaylist(Request $request, $id)
+    {
+        $track = Track::owned()->where('id', $id)->first();
+
+        if (!$track) {
+            return response()->json(['error' => 'Unknown track.']);
+        }
+
+        $this->validate($request, [
+            'playlist_id' => ['required', 'integer', new ValidateTrackPlaylist($track, 'detach')],
+        ]);
+
+        $playlist = Playlist::with('tracks')->find($request->playlist_id);
+
+        $track->playlists()->detach($playlist);
+
+        return response()->json(['success' => 'Track removed from playlist.']);
+    }
+
+    /**
      * Delete specific track resource.
      *
      * @param $id

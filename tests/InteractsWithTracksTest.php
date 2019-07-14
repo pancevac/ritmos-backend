@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 class InteractsWithTracksTest extends TestCase
@@ -99,6 +100,48 @@ class InteractsWithTracksTest extends TestCase
 
         $this->delete('api/tracks/' . $track->id)
             ->seeJson(['success' => 'Track successfully deleted.']);
+
+        $this->notSeeInDatabase('playlist_track', [
+            'playlist_id' => $playlist->id,
+            'track_id' => $track->id,
+        ]);
+    }
+
+    /** @test */
+    function auth_user_can_add_track_to_playlist()
+    {
+        $this->signIn();
+
+        $playlist = factory(\App\Playlist::class)->create(['user_id' => Auth::id()]);
+        $track = factory(\App\Track::class)->create(['user_id' => Auth::id()]);
+
+        $response = $this->put('api/tracks/' . $track->id . '/add_to_playlist', [
+            'playlist_id' => $playlist->id
+        ]);
+
+        $response->seeJson(['success' => 'Track added to playlist.']);
+
+        $this->seeInDatabase('playlist_track', [
+            'playlist_id' => $playlist->id,
+            'track_id' => $track->id,
+        ]);
+    }
+
+    /** @test */
+    function auth_user_can_remove_track_from_playlist()
+    {
+        $this->signIn();
+
+        $playlist = factory(\App\Playlist::class)->create(['user_id' => Auth::id()]);
+        $track = factory(\App\Track::class)->create(['user_id' => Auth::id()]);
+
+        $track->attachToPlaylist($playlist);
+
+        $response = $this->put('api/tracks/' . $track->id . '/remove_from_playlist', [
+            'playlist_id' => $playlist->id
+        ]);
+
+        $response->seeJson(['success' => 'Track removed from playlist.']);
 
         $this->notSeeInDatabase('playlist_track', [
             'playlist_id' => $playlist->id,

@@ -20,12 +20,21 @@ class ValidateTrackPlaylist implements Rule
     protected $noPlaylist;
 
     /**
+     * Type of validation (attach or detach)
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
      * ValidateTrackPlaylist constructor.
      * @param Track $track
+     * @param string $type
      */
-    public function __construct(Track $track)
+    public function __construct(Track $track, string $type = 'attach')
     {
         $this->track = $track;
+        $this->type = $type;
     }
 
     /**
@@ -46,7 +55,12 @@ class ValidateTrackPlaylist implements Rule
             return false;
         }
 
-        return !$playlist->tracks()->where('id', $this->track->id)->exists();
+        // if attaching track to playlist, check if already existing
+        // otherwise check if missing from db
+        switch ($this->type) {
+            case 'attach': return !$playlist->tracks()->where('id', $this->track->id)->exists();
+            case 'detach': return $playlist->tracks()->where('id', $this->track->id)->exists();
+        }
     }
 
     /**
@@ -56,8 +70,16 @@ class ValidateTrackPlaylist implements Rule
      */
     public function message()
     {
-        return $this->noPlaylist ?
-            'Unknown playlist.' :
-            'Track is already added in this playlist.';
+        if ($this->noPlaylist) {
+            $message = 'Unknown playlist';
+        }
+        if ($this->type == 'attach') {
+            $message = 'Track is already added in this playlist.';
+        }
+        if ($this->type == 'detach') {
+            $message = 'Track is already removed from this playlist.';
+        }
+
+        return $message;
     }
 }

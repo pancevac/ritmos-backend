@@ -77,6 +77,16 @@ $router->put('tracks/{track}/update', [
     'uses' => 'TracksController@update',
     'middleware' => 'auth'
 ]);
+$router->put('tracks/{track}/add_to_playlist', [
+    'as' => 'tracks.attach_to_playlist',
+    'uses' => 'TracksController@attachToPlaylist',
+    'middleware' => 'auth'
+]);
+$router->put('tracks/{track}/remove_from_playlist', [
+    'as' => 'tracks.detach_from_playlist',
+    'uses' => 'TracksController@detachFromPlaylist',
+    'middleware' => 'auth'
+]);
 $router->delete('tracks/{track}', [
     'as' => 'tracks.delete',
     'uses' => 'TracksController@destroy',
