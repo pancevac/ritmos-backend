@@ -13,7 +13,7 @@ class InteractsWithUsersTest extends TestCase
 
         $usersPlalists = factory(\App\Playlist::class, 5)->create(['user_id' => $user->id]);
 
-        $user = $user->load('playlists');
+        $user = $user->load(['playlists', 'tracks.media', 'media']);
 
         $this->get('/api/profile/' . $user->id)
             ->seeJson($user->toArray());

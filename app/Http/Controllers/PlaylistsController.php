@@ -59,7 +59,11 @@ class PlaylistsController extends Controller
      */
     public function show($id)
     {
-        $playlist = Playlist::with('owner')->public()->where('id', $id)->first();
+        $playlist = Playlist::with([
+            'owner',        // Load owner of playlist
+            'tracks.media', // Load playlist tracks and its songs paths
+            'media'         // Load playlist image
+        ])->public()->where('id', $id)->first();
 
         if (!$playlist) {
             return response()->json(['error' => 'No data found.'], 404);

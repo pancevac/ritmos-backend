@@ -59,6 +59,10 @@ $router->delete('playlists/{playlist}', [
 /**
  * Track
  */
+$router->get('tracks', [
+    'as' => 'tracks.index',
+    'uses' => 'TracksController@index',
+]);
 $router->post('tracks', [
     'as' => 'tracks.store',
     'uses' => 'TracksController@store',

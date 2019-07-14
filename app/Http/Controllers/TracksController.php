@@ -13,6 +13,22 @@ use wapmorgan\Mp3Info\Mp3Info;
 class TracksController extends Controller
 {
     /**
+     * Get latest tracks from all public playlists.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        return response()->json([
+            'tracks' => Track::with(['media'])
+                ->visible()
+                ->latest()
+                ->take(5)
+                ->get()
+        ]);
+    }
+
+    /**
      * Store new track record.
      *
      * @param Request $request
@@ -59,7 +75,7 @@ class TracksController extends Controller
      */
     public function show($id)
     {
-        $track = Track::where('id', $id)->first();
+        $track = Track::visible()->where('id', $id)->first();
 
         if (!$track) {
             return response()->json(['error' => 'Unknown track.']);
@@ -78,7 +94,7 @@ class TracksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $track = Track::withoutGlobalScopes()->owned()->where('id', $id)->first();
+        $track = Track::owned()->where('id', $id)->first();
 
         if (!$track) {
             return response()->json(['error' => 'Unknown track.']);
@@ -114,7 +130,7 @@ class TracksController extends Controller
      */
     public function destroy($id)
     {
-        $track = Track::withoutGlobalScopes()->owned()->where('id', $id)->first();
+        $track = Track::owned()->where('id', $id)->first();
 
         if (!$track) {
             return response()->json(['erorr' => 'Unknown track.']);

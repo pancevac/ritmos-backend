@@ -29,7 +29,7 @@ class Playlist extends Model implements HasMedia
      * @var array
      */
     protected $hidden = [
-        'user_id', 'updated_at'
+        'user_id', 'updated_at', 'media'
     ];
 
     /**
@@ -46,7 +46,7 @@ class Playlist extends Model implements HasMedia
      *
      * @var array
      */
-    protected $appends = ['path'];
+    protected $appends = ['path', 'media_path'];
 
     /**
      * The "booting" method of the model.
@@ -79,6 +79,7 @@ class Playlist extends Model implements HasMedia
     {
         return $this->belongsToMany(Track::class)
             ->withPivot('order')
+            ->scopes(['visible'])
             ->orderBy('playlist_track.order');
     }
 
@@ -132,6 +133,20 @@ class Playlist extends Model implements HasMedia
     public function getPathAttribute()
     {
         return $this->path();
+    }
+
+    /**
+     * Get media path for playlist cover image.
+     *
+     * @return string
+     */
+    public function getMediaPathAttribute()
+    {
+        if ($this->hasMedia('cover')) {
+            return url($this->getFirstMediaUrl('cover'));
+        }
+
+        return '';
     }
 
     /**

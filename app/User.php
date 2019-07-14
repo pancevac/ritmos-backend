@@ -27,7 +27,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password'
+        'name',
+        'email',
+        'password'
     ];
 
     /**
@@ -36,7 +38,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'password', 'activated', 'blocked', 'created_at', 'updated_at',
+        'password',
+        'activated',
+        'blocked',
+        'created_at',
+        'updated_at',
+        'media'
     ];
 
     /**
@@ -54,7 +61,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $appends = ['profile'];
+    protected $appends = ['profile', 'media_path'];
 
     /**
      * Get playlists that belongs to the user.
@@ -63,7 +70,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function playlists()
     {
-        return $this->hasMany(Playlist::class)->scopes(['public']);
+        return $this->hasMany(Playlist::class)->scopes(['public'])->latest();
+    }
+
+    /**
+     * Get tracks that belongs to the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tracks()
+    {
+        return $this->hasMany(Track::class)->scopes(['visible'])->latest();
     }
 
     /**
@@ -74,6 +91,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getProfileAttribute()
     {
         return $this->profile();
+    }
+
+    /**
+     * Get media path for user profile image.
+     *
+     * @return string
+     */
+    public function getMediaPathAttribute()
+    {
+        if ($this->hasMedia('profile')) {
+            return url($this->getFirstMediaUrl('profile'));
+        }
+
+        return '';
     }
 
     /**

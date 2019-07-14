@@ -10,7 +10,14 @@ class ProfileController extends Controller
 {
     public function show($id)
     {
-        $profile = User::with('playlists')->activated()->where('id', $id)->first();
+        $profile = User::with([
+            'playlists',    // Load playlist
+            'tracks.media', // Load tracks records with media (song path)
+            'media'         // Load user profile image
+        ])
+            ->activated()
+            ->where('id', $id)
+            ->first();
 
         if (!$profile) {
             return response()->json(['error' => 'No user profile found.'], 404);
