@@ -63,6 +63,10 @@ $router->get('tracks', [
     'as' => 'tracks.index',
     'uses' => 'TracksController@index',
 ]);
+$router->get('tracks/{track}', [
+    'as' => 'tracks.show',
+    'uses' => 'TracksController@show',
+]);
 $router->post('tracks', [
     'as' => 'tracks.store',
     'uses' => 'TracksController@store',

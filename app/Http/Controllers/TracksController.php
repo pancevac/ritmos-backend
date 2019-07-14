@@ -78,7 +78,7 @@ class TracksController extends Controller
         $track = Track::visible()->where('id', $id)->first();
 
         if (!$track) {
-            return response()->json(['error' => 'Unknown track.']);
+            return response()->json(['error' => 'Unknown track.'], 404);
         }
 
         return $track;
@@ -113,9 +113,10 @@ class TracksController extends Controller
             'album'
         ]));
 
-        $playlist = Playlist::with('tracks')->find($request->playlist_id);
-
-        $track->attachToPlaylist($playlist);
+        if ($request->has('playlist_id')) {
+            $playlist = Playlist::with('tracks')->find($request->playlist_id);
+            $track->attachToPlaylist($playlist);
+        }
 
         return $result ?
             response()->json([$track->fresh()]) :

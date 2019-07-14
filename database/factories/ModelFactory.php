@@ -31,3 +31,18 @@ $factory->define(App\Playlist::class, function (Faker\Generator $faker) {
         ])->id,
     ];
 });
+
+$factory->define(App\Track::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+        'duration' => $faker->time('s', 200),
+        'image_url' => $faker->imageUrl(),
+        'artist' => $faker->name,
+        'album' => $faker->name,
+        'publishing_year' => $faker->date('Y'),
+        'user_id' => factory(\App\User::class)->create([
+            'activated' => true,
+            'blocked' => false
+        ])->id,
+    ];
+});
