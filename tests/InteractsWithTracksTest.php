@@ -23,7 +23,8 @@ class InteractsWithTracksTest extends TestCase
 
         // assign tracks to playlist.
         $assignedTracks->each(function (\App\Track $track) use ($playlist) {
-            $track->attachToPlaylist($playlist);
+            $playlist->attach($track);
+//            $track->attachToPlaylist($playlist);
         });
 
         $this->get('api/tracks')
@@ -42,7 +43,7 @@ class InteractsWithTracksTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        $track->attachToPlaylist($playlist);
+        $playlist->attach($track);
 
         $this->get('api/tracks/' . $track->id)
             ->seeJson($track->toArray());
@@ -58,7 +59,7 @@ class InteractsWithTracksTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        $track->attachToPlaylist($playlist);
+        $playlist->attach($track);
 
         $this->get('api/tracks/' . $track->id)->assertResponseStatus(404);
     }
@@ -135,7 +136,7 @@ class InteractsWithTracksTest extends TestCase
         $playlist = factory(\App\Playlist::class)->create(['user_id' => Auth::id()]);
         $track = factory(\App\Track::class)->create(['user_id' => Auth::id()]);
 
-        $track->attachToPlaylist($playlist);
+        $playlist->attach($track);
 
         $response = $this->put('api/tracks/' . $track->id . '/remove_from_playlist', [
             'playlist_id' => $playlist->id

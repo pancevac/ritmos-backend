@@ -177,4 +177,21 @@ class Playlist extends Model implements HasMedia
         $this->addMediaCollection('cover')
             ->singleFile();
     }
+
+    /**
+     * Attach track to the playlist.
+     *
+     * @param Track $track
+     */
+    public function attach(Track $track)
+    {
+        $order = 1;
+
+        if ($this->tracks->isNotEmpty()) {
+            $highestOrderTrack = $this->tracks->last();
+            $order = $highestOrderTrack->pivot->order + 1;
+        }
+
+        $this->tracks()->attach($track->id, ['order' => $order]);
+    }
 }

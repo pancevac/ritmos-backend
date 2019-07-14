@@ -115,7 +115,7 @@ class TracksController extends Controller
 
         if ($request->has('playlist_id')) {
             $playlist = Playlist::with('tracks')->find($request->playlist_id);
-            $track->attachToPlaylist($playlist);
+            $playlist->attach($track);
         }
 
         return $result ?
@@ -145,7 +145,7 @@ class TracksController extends Controller
 
         $playlist = Playlist::with('tracks')->find($request->playlist_id);
 
-        $track->attachToPlaylist($playlist);
+        $playlist->attach($track);
 
         return response()->json(['success' => 'Track added to playlist.']);
     }
@@ -172,7 +172,7 @@ class TracksController extends Controller
 
         $playlist = Playlist::with('tracks')->find($request->playlist_id);
 
-        $track->playlists()->detach($playlist);
+        $playlist->tracks()->detach($track);
 
         return response()->json(['success' => 'Track removed from playlist.']);
     }

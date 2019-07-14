@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Traits\PlaylistAttachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +10,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 class Track extends Model implements HasMedia
 {
-    use HasMediaTrait, PlaylistAttachable;
+    use HasMediaTrait;
 
     /**
      * The attributes that are mass assignable.
