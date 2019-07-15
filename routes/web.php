@@ -24,6 +24,8 @@ $router->get('user', ['middleware' => 'auth', function (Request $request) {
 $router->post('login', 'Auth\LoginController@login');
 $router->post('register', 'Auth\RegisterController@register');
 
+$router->get('search', 'SearchController@search');
+
 /**
  * Playlist
  */
