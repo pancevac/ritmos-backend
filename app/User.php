@@ -11,12 +11,15 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class User extends Model implements AuthenticatableContract, AuthorizableContract, HasMedia
 {
     use HasApiTokens,
         Authenticatable,
-        Authorizable;
+        Authorizable,
+        HasMediaTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -33,7 +36,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'id', 'password', 'activated', 'blocked', 'created_at', 'updated_at',
+        'password', 'activated', 'blocked', 'created_at', 'updated_at',
     ];
 
     /**
@@ -117,5 +120,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 'User account is not active', 6,
                 'account_inactive', 401);
         }
+    }
+
+    /**
+     * Register playlist image collections.
+     */
+    public function registerMediaCollections()
+    {
+        $this->addMediaCollection('profile')
+            ->singleFile();
     }
 }
