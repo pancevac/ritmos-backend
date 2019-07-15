@@ -70,7 +70,13 @@ class InteractsWithPlaylistsTest extends TestCase
         $playlist = factory(\App\Playlist::class)->create([
             'user_id' => Auth::id(),
             'private' => true
-        ])->load('owner');
+        ]);
+
+        $tracks = factory(\App\Track::class, 3)->create(['user_id' => Auth::id()]);
+
+        $playlist->tracks()->attach($tracks->pluck('id')->toArray());
+
+        $playlist->load(['owner', 'tracks']);
 
         $this->get('api/playlists/' . $playlist->getKey())
             ->seeJson($playlist->toArray());
@@ -91,7 +97,7 @@ class InteractsWithPlaylistsTest extends TestCase
     }
 
     /** @test */
-    function a_non_auth_user_can_now_create_playlist()
+    function a_non_auth_user_can_not_create_playlist()
     {
         $playlist = factory(\App\Playlist::class)->make();
 

@@ -57,9 +57,9 @@ $app->singleton(
 |
 */
 
-// $app->middleware([
-//     App\Http\Middleware\ExampleMiddleware::class
-// ]);
+$app->middleware([
+    Clockwork\Support\Lumen\ClockworkMiddleware::class // only dev
+]);
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
@@ -89,6 +89,7 @@ $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(Spatie\MediaLibrary\MediaLibraryServiceProvider::class);
+$app->register(Clockwork\Support\Lumen\ClockworkServiceProvider::class); // only dev
 
 // Register lumen commands provider for dev env.
 if (env('APP_ENV') === 'local') {

@@ -43,7 +43,54 @@ $router->get('playlists/{playlist}', [
 $router->post('playlists/{playlist}/upload/image', [
     'as' => 'playlists.image',
     'uses' => 'PlaylistsController@uploadImage',
-    'middeware' => 'auth'
+    'middleware' => 'auth'
+]);
+$router->put('playlists/{playlist}/update', [
+    'as' => 'playlists.update',
+    'uses' => 'PlaylistsController@update',
+    'middleware' => 'auth',
+]);
+$router->delete('playlists/{playlist}', [
+    'as' => 'playlists.delete',
+    'uses' => 'PlaylistsController@destroy',
+    'middleware' => 'auth',
+]);
+
+/**
+ * Track
+ */
+$router->get('tracks', [
+    'as' => 'tracks.index',
+    'uses' => 'TracksController@index',
+]);
+$router->get('tracks/{track}', [
+    'as' => 'tracks.show',
+    'uses' => 'TracksController@show',
+]);
+$router->post('tracks', [
+    'as' => 'tracks.store',
+    'uses' => 'TracksController@store',
+    'middleware' => 'auth'
+]);
+$router->put('tracks/{track}/update', [
+    'as' => 'tracks.update',
+    'uses' => 'TracksController@update',
+    'middleware' => 'auth'
+]);
+$router->put('tracks/{track}/add_to_playlist', [
+    'as' => 'tracks.attach_to_playlist',
+    'uses' => 'TracksController@attachToPlaylist',
+    'middleware' => 'auth'
+]);
+$router->put('tracks/{track}/remove_from_playlist', [
+    'as' => 'tracks.detach_from_playlist',
+    'uses' => 'TracksController@detachFromPlaylist',
+    'middleware' => 'auth'
+]);
+$router->delete('tracks/{track}', [
+    'as' => 'tracks.delete',
+    'uses' => 'TracksController@destroy',
+    'middleware' => 'auth'
 ]);
 
 /**

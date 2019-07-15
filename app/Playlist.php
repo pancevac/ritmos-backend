@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Scopes\ActivatedOwnerScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class Playlist extends Model implements HasMedia
      * @var array
      */
     protected $hidden = [
-        'user_id', 'updated_at'
+        'user_id', 'updated_at', 'media'
     ];
 
     /**
@@ -45,7 +46,7 @@ class Playlist extends Model implements HasMedia
      *
      * @var array
      */
-    protected $appends = ['path'];
+    protected $appends = ['path', 'media_path'];
 
     /**
      * The "booting" method of the model.
@@ -70,6 +71,19 @@ class Playlist extends Model implements HasMedia
     }
 
     /**
+     * Get all tracks in playlist.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function tracks()
+    {
+        return $this->belongsToMany(Track::class)
+            ->withPivot('order')
+            ->scopes(['visible'])
+            ->orderBy('playlist_track.order');
+    }
+
+    /**
      * Scope a query to only include public or owner playlist.
      *
      * @param Builder $builder
@@ -80,6 +94,17 @@ class Playlist extends Model implements HasMedia
         $builder->where('private', '!=', true);
 
         return Auth::check() ? $builder->orWhere('user_id', Auth::id()) : $builder;
+    }
+
+    /**
+     * Scope a query to only return playlist owned by user.
+     *
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function scopeOwned(Builder $builder)
+    {
+        return $builder->where('user_id', Auth::id());
     }
 
     /**
@@ -111,6 +136,20 @@ class Playlist extends Model implements HasMedia
     }
 
     /**
+     * Get media path for playlist cover image.
+     *
+     * @return string
+     */
+    public function getMediaPathAttribute()
+    {
+        if ($this->hasMedia('cover')) {
+            return url($this->getFirstMediaUrl('cover'));
+        }
+
+        return '';
+    }
+
+    /**
      * Set the user id for playlist.
      *
      * @param $value
@@ -137,5 +176,22 @@ class Playlist extends Model implements HasMedia
     {
         $this->addMediaCollection('cover')
             ->singleFile();
+    }
+
+    /**
+     * Attach track to the playlist.
+     *
+     * @param Track $track
+     */
+    public function attach(Track $track)
+    {
+        $order = 1;
+
+        if ($this->tracks->isNotEmpty()) {
+            $highestOrderTrack = $this->tracks->last();
+            $order = $highestOrderTrack->pivot->order + 1;
+        }
+
+        $this->tracks()->attach($track->id, ['order' => $order]);
     }
 }
