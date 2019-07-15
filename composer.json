@@ -4,6 +4,12 @@
     "keywords": ["framework", "laravel", "lumen"],
     "license": "MIT",
     "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/pancevac/laravel-searchable.git"
+        }
+    ],
     "require": {
         "php": ">=7.1.3",
         "appzcoder/lumen-routes-list": "^1.0",
@@ -11,7 +17,8 @@
         "laravel/lumen-framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "spatie/laravel-medialibrary": "^7.6",
-        "wapmorgan/mp3info": "^0.0.4"
+        "wapmorgan/mp3info": "^0.0.4",
+        "spatie/laravel-searchable": "dev-lumen"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",

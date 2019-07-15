@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class Track extends Model implements HasMedia
+class Track extends Model implements HasMedia, Searchable
 {
     use HasMediaTrait;
 
@@ -124,5 +126,19 @@ class Track extends Model implements HasMedia
     {
         $this->addMediaCollection('track')
             ->singleFile();
+    }
+
+    /**
+     * Return model name and path as searching result.
+     *
+     * @return SearchResult
+     */
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->name,
+            route('tracks.show', ['track' => $this])
+        );
     }
 }

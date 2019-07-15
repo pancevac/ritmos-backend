@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a09b246d3f621ff45fb3ae57d21cbe17",
+    "content-hash": "511068c0223cab71981f3467cc98897b",
     "packages": [
         {
             "name": "appzcoder/lumen-routes-list",
@@ -3580,6 +3580,76 @@
             "time": "2019-07-11T14:04:27+00:00"
         },
         {
+            "name": "spatie/laravel-searchable",
+            "version": "dev-lumen",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pancevac/laravel-searchable.git",
+                "reference": "19a215b4aed88873d5906c52d8e0c833493756c0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pancevac/laravel-searchable/zipball/19a215b4aed88873d5906c52d8e0c833493756c0",
+                "reference": "19a215b4aed88873d5906c52d8e0c833493756c0",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/lumen-framework": "~5.8.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "larapack/dd": "^1.0",
+                "orchestra/testbench": "~3.8.0",
+                "phpunit/phpunit": "^7.5|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Searchable\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Spatie\\Searchable\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Vanderbist",
+                    "email": "alex@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Pragmatically search through models and other sources",
+            "homepage": "https://github.com/spatie/laravel-searchable",
+            "keywords": [
+                "laravel-searchable",
+                "spatie"
+            ],
+            "support": {
+                "source": "https://github.com/pancevac/laravel-searchable/tree/lumen"
+            },
+            "time": "2019-07-15T08:46:14+00:00"
+        },
+        {
             "name": "spatie/pdf-to-image",
             "version": "1.2.2",
             "source": {
@@ -6708,6 +6778,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "spatie/laravel-searchable": 20,
         "niellles/lumen-commands": 20
     },
     "prefer-stable": true,

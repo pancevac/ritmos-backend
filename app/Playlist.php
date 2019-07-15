@@ -9,8 +9,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class Playlist extends Model implements HasMedia
+class Playlist extends Model implements HasMedia, Searchable
 {
     use HasMediaTrait;
 
@@ -193,5 +195,19 @@ class Playlist extends Model implements HasMedia
         }
 
         $this->tracks()->attach($track->id, ['order' => $order]);
+    }
+
+    /**
+     * Return model name and path as searching result.
+     *
+     * @return SearchResult
+     */
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->name,
+            $this->path()
+        );
     }
 }
