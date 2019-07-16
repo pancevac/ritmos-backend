@@ -58,7 +58,8 @@ $app->singleton(
 */
 
 $app->middleware([
-    Clockwork\Support\Lumen\ClockworkMiddleware::class // only dev
+    Clockwork\Support\Lumen\ClockworkMiddleware::class, // only dev
+    Barryvdh\Cors\HandleCors::class,
 ]);
 
 $app->routeMiddleware([
@@ -86,6 +87,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Laravel\Tinker\TinkerServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
+$app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(Spatie\MediaLibrary\MediaLibraryServiceProvider::class);
@@ -104,6 +106,7 @@ if (env('APP_ENV') === 'local') {
 */
 $app->configure('auth');
 $app->configure('passport');
+$app->configure('cors');
 $app->configure('medialibrary');
 $app->configure('filesystems');
 

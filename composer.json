@@ -13,12 +13,13 @@
     "require": {
         "php": ">=7.1.3",
         "appzcoder/lumen-routes-list": "^1.0",
+        "barryvdh/laravel-cors": "^0.11.3",
         "dusterio/lumen-passport": "^0.2.11",
         "laravel/lumen-framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "spatie/laravel-medialibrary": "^7.6",
-        "wapmorgan/mp3info": "^0.0.4",
-        "spatie/laravel-searchable": "dev-lumen"
+        "spatie/laravel-searchable": "dev-lumen",
+        "wapmorgan/mp3info": "^0.0.4"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",
