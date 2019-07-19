@@ -64,6 +64,18 @@ class TracksController extends Controller
             ->usingName($API->getTItle())
             ->toMediaCollection('track');
 
+        // If request has playlist_id, attach newly created track to
+        // playlist with that id
+        if ($request->has('playlist_id')) {
+
+            $this->validate($request, [
+                'playlist_id' => ['required', 'integer', new ValidateTrackPlaylist($track)],
+            ]);
+
+            $playlist = Playlist::with('tracks')->find($request->playlist_id);
+            $playlist->attach($track);
+        }
+
         return $track;
     }
 
@@ -75,7 +87,7 @@ class TracksController extends Controller
      */
     public function show($id)
     {
-        $track = Track::visible()->where('id', $id)->first();
+        $track = Track::with('playlists')->visible()->where('id', $id)->first();
 
         if (!$track) {
             return response()->json(['error' => 'Unknown track.'], 404);
