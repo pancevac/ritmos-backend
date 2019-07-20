@@ -19,6 +19,7 @@ class PlaylistsController extends Controller
     {
         return response()->json([
             'playlists' => Playlist::with('owner')
+                ->withCount('tracks')
                 ->public()
                 ->includeByUser($request)
                 ->latest()

@@ -96,6 +96,14 @@ class Track extends Model implements HasMedia, Searchable
     }
 
     /**
+     * Transform track duration from seconds into minutes.
+     */
+    public function getDurationAttribute($value)
+    {
+        return round($value / 60, 2);
+    }
+
+    /**
      * Scope a query to only include owned track by logged user.
      *
      * @param Builder $builder
