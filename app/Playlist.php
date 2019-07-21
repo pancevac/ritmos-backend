@@ -152,6 +152,18 @@ class Playlist extends Model implements HasMedia, Searchable
     }
 
     /**
+     * Return total duration of given playlist.
+     */
+    public function getTotalDurationAttribute()
+    {
+        $duration = $this->tracks->reduce(function ($carry, $track) {
+            return $carry + (double) $track->getOriginal('duration');
+        }, 0);
+
+        return gmdate('H:i:s', $duration);
+    }
+
+    /**
      * Set the user id for playlist.
      *
      * @param $value

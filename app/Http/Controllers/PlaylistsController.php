@@ -64,7 +64,12 @@ class PlaylistsController extends Controller
             'owner',        // Load owner of playlist
             'tracks.media', // Load playlist tracks and its songs paths
             'media'         // Load playlist image
-        ])->public()->where('id', $id)->first();
+        ])
+            ->withCount('tracks')
+            ->public()
+            ->where('id', $id)
+            ->first()
+            ->append('total_duration');
 
         if (!$playlist) {
             return response()->json(['error' => 'No data found.'], 404);
