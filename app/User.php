@@ -104,7 +104,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return url($this->getFirstMediaUrl('profile'));
         }
 
-        return '';
+        return url('images/defaultUser.png');
     }
 
     /**
