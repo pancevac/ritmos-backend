@@ -148,7 +148,7 @@ class Playlist extends Model implements HasMedia, Searchable
             return url($this->getFirstMediaUrl('cover'));
         }
 
-        return '';
+        return url('images/defaultPlaylist.jpeg');
     }
 
     /**
