@@ -114,8 +114,8 @@ class TracksController extends Controller
 
         $this->validate($request, [
             'name' => 'string|max:255',
-            'artist' => 'string|max:255',
-            'album' => 'string|max:255',
+            'artist' => 'nullable|string|max:255',
+            'album' => 'nullable|string|max:255',
             'playlist_id' => ['integer', new ValidateTrackPlaylist($track)],
         ]);
 
